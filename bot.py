@@ -23,7 +23,6 @@ logger = logging.getLogger(__name__)
 TOKEN = os.environ.get("TELEGRAM_TOKEN")
 HELP_LINK = os.environ.get("HELP_LINK", "https://alari12.github.io/MindCarePLC/")
 TRIGGERS = os.environ.get("TRIGGERS", "wallet,usdt,crypto,sol,help")
-BSCSCAN_API_KEY = os.environ.get("BSCSCAN_API_KEY")  # optional
 
 TRIGGER_WORDS = [t.strip().lower() for t in TRIGGERS.split(",") if t.strip()]
 
@@ -69,7 +68,7 @@ async def authorize(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("❌ Wrong passcode. Access denied.")
 
 
-# /balance command
+# /balance command (dummy, since no BSCSCAN_API_KEY)
 async def check_balance(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.message.from_user.id
 
@@ -83,32 +82,12 @@ async def check_balance(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     wallet = context.args[0]
 
-    if not BSCSCAN_API_KEY:
-        # Fallback dummy balance
-        dummy_balance = "81.46 USDT"
-        await update.message.reply_text(
-            f"💰 Wallet: {wallet}\nBalance: {dummy_balance}\n\n"
-            "(Dummy result — add BSCSCAN_API_KEY to get live balances)"
-        )
-        return
-
-    # Real API fetch
-    try:
-        url = f"https://api.bscscan.com/api?module=account&action=tokenbalance&contractaddress=0x55d398326f99059fF775485246999027B3197955&address={wallet}&tag=latest&apikey={BSCSCAN_API_KEY}"
-        r = requests.get(url)
-        data = r.json()
-
-        if data["status"] == "1":
-            raw = int(data["result"])
-            usdt_balance = raw / 1e18  # decimals
-            await update.message.reply_text(
-                f"💰 Wallet: {wallet}\nBalance: {usdt_balance:.2f} USDT"
-            )
-        else:
-            await update.message.reply_text("⚠️ Error fetching balance. Please try again.")
-    except Exception as e:
-        logger.exception("Balance fetch error: %s", e)
-        await update.message.reply_text("❌ Failed to fetch balance. Check API or wallet.")
+    # Dummy balance (since no BSCSCAN_API_KEY)
+    dummy_balance = "81.46 USDT"
+    await update.message.reply_text(
+        f"💰 Wallet: {wallet}\nBalance: {dummy_balance}\n\n"
+        "(Dummy result — add BSCSCAN_API_KEY to get live balances)"
+    )
 
 
 # Group monitoring
