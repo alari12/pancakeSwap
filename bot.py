@@ -158,4 +158,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-sage.from_user.is_bot:
