@@ -177,8 +177,6 @@ async def handle_group_message(update: Update, context: ContextTypes.DEFAULT_TYP
                     "Reply here to continue. (I only use public on-chain data.)"
                 )
                 await context.bot.send_message(chat_id=user_id, text=dm)
-                # Optionally — start the conversation handler: we cannot directly trigger ConversationHandler entry here,
-                # but sending this DM will let the user reply and start the flow (we can also instruct them to type anything).
             except Exception as e:
                 logger.info("Could not DM user %s: %s", user_id, e)
             break
